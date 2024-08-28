@@ -50,7 +50,7 @@ app.get('/factorize', (req, res) => {
 
 
 app.get('/matrix_multiply', (req, res) => {
-    const N = 1000;
+    const N = 500;
     let a = Array(N).fill().map(() => Array(N).fill(1.0));
     let b = Array(N).fill().map(() => Array(N).fill(2.0));
     let c = Array(N).fill().map(() => Array(N).fill(0.0));

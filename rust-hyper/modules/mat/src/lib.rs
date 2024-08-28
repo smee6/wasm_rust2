@@ -1,13 +1,13 @@
-use wasm_bindgen::prelude::*;
-
 #[no_mangle]
 pub extern "C" fn matrix_multiply() -> f64 {
-    const N: usize = 1000;
-    let a = [[1.0; N]; N];
-    let b = [[2.0; N]; N];
-    let mut c = [[0.0; N]; N];
+    const N: usize = 500;
+    
+    // Use heap-allocated matrices
+    let mut a = vec![vec![1.0; N]; N];
+    let mut b = vec![vec![2.0; N]; N];
+    let mut c = vec![vec![0.0; N]; N];
 
-    // 행렬 곱셈 수행
+    // Matrix multiplication
     for i in 0..N {
         for j in 0..N {
             for k in 0..N {
@@ -16,6 +16,6 @@ pub extern "C" fn matrix_multiply() -> f64 {
         }
     }
 
-    // 결과로 행렬 c의 첫번째 원소를 반환
+    // Return the first element of the result matrix
     c[0][0]
 }
