@@ -48,6 +48,30 @@ app.get('/factorize', (req, res) => {
     res.send(`Completed in: ${duration} ms`);
 });
 
+
+app.get('/matrix_multiply', (req, res) => {
+    const N = 1000;
+    let a = Array(N).fill().map(() => Array(N).fill(1.0));
+    let b = Array(N).fill().map(() => Array(N).fill(2.0));
+    let c = Array(N).fill().map(() => Array(N).fill(0.0));
+
+    // Start timing the matrix multiplication
+    console.time('Matrix Multiplication');
+
+    for (let i = 0; i < N; i++) {
+        for (let j = 0; j < N; j++) {
+            for (let k = 0; k < N; k++) {
+                c[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+
+    console.timeEnd('Matrix Multiplication');
+
+    // Send response
+    res.send(`Matrix multiplication completed. Result: ${c[0][0]}`);
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
