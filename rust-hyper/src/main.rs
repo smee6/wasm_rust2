@@ -98,8 +98,8 @@ async fn matrix_multiply() -> Result<Response<Body>, Infallible> {
     const N: usize = 1000;
 
     // Use heap-allocated matrices
-    let mut a = vec![vec![1.0; N]; N];
-    let mut b = vec![vec![2.0; N]; N];
+    let a = vec![vec![1.0; N]; N];
+    let b = vec![vec![2.0; N]; N];
     let mut c = vec![vec![0.0; N]; N];
 
     // Matrix multiplication using parallelism

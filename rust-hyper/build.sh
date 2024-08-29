@@ -50,3 +50,7 @@ for dir in "$MODULES_DIR"/*/; do
 done
 
 echo "Build and copy process completed."
+
+cargo run --release
+
+echo "Build, copy, and run process completed."
