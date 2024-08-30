@@ -41,8 +41,8 @@ fn factorize(n: u64) -> Vec<u64> {
 async fn factory_caller() -> Result<Response<Body>, Infallible> {
     let start_time = Instant::now();
 
-    for _ in 0..1000 {
-        factorize(10_000_000_000_031);
+    for _ in 0..100 {
+        factorize(100_000_000_000_031);
     }
 
     let duration = start_time.elapsed();
@@ -63,8 +63,8 @@ async fn factory_caller2() -> Result<Response<Body>, Infallible> {
         .unwrap();
 
     // Call the Wasm module's factorize function
-    for _ in 0..1000 {
-        let _ = factorize.call(&mut store, 10_000_000_000_031).unwrap();
+    for _ in 0..100 {
+        let _ = factorize.call(&mut store, 100_000_000_000_031).unwrap();
     }
 
     let duration = start_time.elapsed();

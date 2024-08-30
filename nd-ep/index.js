@@ -40,8 +40,8 @@ function factorize(n) {
 app.get('/factorize', (req, res) => {
     const startTime = Date.now();
 
-    for (let i = 0; i < 1000; i++) {
-        factorize(10000000000031);
+    for (let i = 0; i < 100; i++) {
+        factorize(100000000000031);
     }
 
     const duration = Date.now() - startTime;

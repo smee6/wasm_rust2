@@ -26,8 +26,8 @@ public class TestController {
     public String factorize() {
         long startTime = System.currentTimeMillis();
 
-        for (int i = 0; i < 1000; i++) {
-            Factorizer.factorize(10000000000031L);
+        for (int i = 0; i < 100; i++) {
+            Factorizer.factorize(100000000000031L);
         }
 
         long duration = System.currentTimeMillis() - startTime;
