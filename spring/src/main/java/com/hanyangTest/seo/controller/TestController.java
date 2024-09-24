@@ -2,6 +2,7 @@ package com.hanyangTest.seo.controller;
 
 import org.springframework.web.bind.annotation.*;
 import com.hanyangTest.seo.utils.Factorizer;
+import com.hanyangTest.seo.utils.Matrix;
 
 @RestController
 @RequestMapping("/")
@@ -20,6 +21,27 @@ public class TestController {
     @PostMapping("/mirror")
     public String mirror(@RequestBody String body) {
         return body;
+    }
+
+    @GetMapping("/matrix_multiply")
+    public String matrix_multiply() {
+        int n = 2500;
+        double[][] a = new double[n][n];
+        double[][] b = new double[n][n];
+
+        // Initialize matrices with some values
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                a[i][j] = 1.0;
+                b[i][j] = 2.0;
+            }
+        }
+
+        long startTime = System.currentTimeMillis();
+        double[][] c = Matrix.multiply(a, b);
+        long endTime = System.currentTimeMillis();
+
+        return "Matrix multiplication completed in " + (endTime - startTime) + " milliseconds." + "Result[0][0]: " + c[0][0];
     }
 
     @GetMapping("/factorize")
