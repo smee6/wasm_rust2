@@ -10,12 +10,9 @@ app.get('/hello', (req, res) => {
     res.send('Hello, world!');
 });
 
-app.get('/bye', (req, res) => {
-    res.send('Goodbye, world!');
-});
-
-app.post('/mirror', (req, res) => {
-    res.send(JSON.stringify(req.body));
+app.post('/parsetest', (req, res) => {
+    const body = req.body;
+    res.send(JSON.parse(body));
 });
 
 function factorize(n) {
