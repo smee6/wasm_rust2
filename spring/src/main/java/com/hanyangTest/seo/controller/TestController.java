@@ -23,9 +23,9 @@ public class TestController {
         return body;
     }
 
-    @GetMapping("/matrix_multiply")
+    @GetMapping("/mat")
     public String matrix_multiply() {
-        int n = 2500;
+        int n = 1000;
         double[][] a = new double[n][n];
         double[][] b = new double[n][n];
 

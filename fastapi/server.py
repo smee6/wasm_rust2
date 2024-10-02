@@ -4,9 +4,9 @@ import numpy as np
 app = FastAPI()
 
 
-@app.get("/matrix_multiply")
+@app.get("/mat")
 def matrix_multiply():
-    N = 2500
+    N = 1000
 
     # 행렬 할당
     a = [[1.0 for _ in range(N)] for _ in range(N)]

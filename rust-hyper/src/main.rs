@@ -129,7 +129,7 @@ async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible
         (&Method::POST, "/mirror") => handle_mirror(req).await,
         (&Method::GET, "/factorize") => factory_caller().await,
         (&Method::GET, "/factorize2") => factory_caller2().await,
-        (&Method::GET, "/matrix_multiply") => factory_caller3().await,
+        (&Method::GET, "/mat") => factory_caller3().await,
         (&Method::GET, "/matrix_multiply2") => matrix_multiply().await,
         _ => Ok(Response::new(Body::from("Not Found"))),
     }
