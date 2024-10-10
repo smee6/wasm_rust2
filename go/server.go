@@ -6,7 +6,7 @@ import (
 )
 
 func matrixMultiply(w http.ResponseWriter, r *http.Request) {
-	const N = 1000
+	const N = 5000
 
 	// 행렬 할당
 	a := make([][]float64, N)
@@ -40,7 +40,7 @@ func matrixMultiply(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// helloworld
-	println("Hello, World!")	
+	println("Hello, World!")
 	http.HandleFunc("/mat", matrixMultiply)
 	http.ListenAndServe(":3000", nil)
 }

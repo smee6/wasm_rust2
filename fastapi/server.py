@@ -6,7 +6,7 @@ app = FastAPI()
 
 @app.get("/mat")
 def matrix_multiply():
-    N = 1000
+    N = 5000
 
     # 행렬 할당
     a = [[1.0 for _ in range(N)] for _ in range(N)]
