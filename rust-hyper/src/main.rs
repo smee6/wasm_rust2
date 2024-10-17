@@ -6,18 +6,24 @@ use std::env;
 
 mod controllers;
 mod middleware;
+mod utils;
 
 use controllers::matrix::matrix_multiply;
+use controllers::hello::hello_world;
 use middleware::guard::query_checker;
+use utils::response::create_response;
 
 async fn router(req: Request<Body>) -> Result<Response<Body>, Infallible> {
-    if let Err(response) = query_checker(&req).await {
-        return Ok(response);
+    if req.uri().path() == "/matrix_multiply" {
+        if let Err(response) = query_checker(&req).await {
+            return Ok(response);
+        }
     }
     
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/matrix_multiply") => matrix_multiply().await,
-        _ => Ok(Response::new(Body::from("Not Found"))),
+        (&Method::GET, "/hello") => hello_world().await,
+        _ => Ok(create_response(404, "Not Found")),
     }
 }
 
