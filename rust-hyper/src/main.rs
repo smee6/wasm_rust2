@@ -29,10 +29,8 @@ async fn router(req: Request<Body>) -> Result<Response<Body>, Infallible> {
 
 #[tokio::main]
 async fn main() {
-    // Load environment variables from .env file
     dotenv().ok();
-    
-    // Retrieve server IP and PORT from environment variables
+
     let server_ip = env::var("SERVER_IP").unwrap_or_else(|_| "127.0.0.1".to_string());
     let server_port = env::var("SERVER_PORT")
         .unwrap_or_else(|_| "3000".to_string())
