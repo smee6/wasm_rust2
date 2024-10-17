@@ -7,7 +7,7 @@ ROOT_DIR=$(pwd)
 MODULES_DIR="$ROOT_DIR/modules"
 
 # set the target directory to copy the generated .wasm files (e.g., wasm folder in the root directory)
-TARGET_DIR="$ROOT_DIR"
+TARGET_DIR="$ROOT_DIR/wasms"
 
 # when the target directory does not exist, create it
 mkdir -p "$TARGET_DIR"

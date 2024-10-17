@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+dotenv = "0.15"
 hyper = { version = "0.14", features = ["full"] }
 tokio = { version = "1", features = ["full"] }
 wasmtime = "0.30.0"

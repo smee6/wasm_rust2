@@ -1,10 +1,10 @@
 #[no_mangle]
 pub extern "C" fn matrix_multiply() -> f64 {
-    const N: usize = 5000;
+    const N: usize = 100;
     
     // Use heap-allocated matrices
-    let mut a = vec![vec![1.0; N]; N];
-    let mut b = vec![vec![2.0; N]; N];
+    let a = vec![vec![1.0; N]; N];
+    let b = vec![vec![2.0; N]; N];
     let mut c = vec![vec![0.0; N]; N];
 
     // Matrix multiplication

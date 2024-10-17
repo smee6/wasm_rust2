@@ -1,146 +1,41 @@
 use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Method, Request, Response, Server};
 use std::convert::Infallible;
-use tokio::time::Instant;
-use wasmtime::*;
-use tokio::task;
+use dotenv::dotenv;
+use std::env;
 
-async fn handle_hello() -> Result<Response<Body>, Infallible> {
-    Ok(Response::new(Body::from("Hello, world!")))
-}
+mod controllers;
+mod middleware;
 
-async fn handle_bye() -> Result<Response<Body>, Infallible> {
-    Ok(Response::new(Body::from("Goodbye, world!")))
-}
+use controllers::matrix::matrix_multiply;
+use middleware::guard::query_checker;
 
-async fn handle_mirror(req: Request<Body>) -> Result<Response<Body>, Infallible> {
-    let full_body = hyper::body::to_bytes(req.into_body()).await.unwrap();
-    Ok(Response::new(Body::from(full_body)))
-}
-
-fn factorize(n: u64) -> Vec<u64> {
-    let mut factors = Vec::new();
-    let mut d = 2;
-    let mut num = n;
-    while num > 1 {
-        while num % d == 0 {
-            factors.push(d);
-            num /= d;
-        }
-        d += 1;
-        if d * d > num {
-            if num > 1 {
-                factors.push(num);
-            }
-            break;
-        }
+async fn router(req: Request<Body>) -> Result<Response<Body>, Infallible> {
+    if let Err(response) = query_checker(&req).await {
+        return Ok(response);
     }
-    factors
-}
-
-async fn factory_caller() -> Result<Response<Body>, Infallible> {
-    let start_time = Instant::now();
-
-    for _ in 0..100 {
-        factorize(100_000_000_000_031);
-    }
-
-    let duration = start_time.elapsed();
-    let body = format!("Completed in: {:?}", duration);
-    Ok(Response::new(Body::from(body)))
-}
-
-async fn factory_caller2() -> Result<Response<Body>, Infallible> {
-    let start_time = Instant::now();
-
-    // Initialize Wasmtime
-    let engine = Engine::default();
-    let module = Module::from_file(&engine, "factorize_wasm.wasm").unwrap();
-    let mut store = Store::new(&engine, ());
-    let instance = Instance::new(&mut store, &module, &[]).unwrap();
-    let factorize = instance
-        .get_typed_func::<u64, u64, _>(&mut store, "factorize")
-        .unwrap();
-
-    // Call the Wasm module's factorize function
-    for _ in 0..100 {
-        let _ = factorize.call(&mut store, 100_000_000_000_031).unwrap();
-    }
-
-    let duration = start_time.elapsed();
-    let body = format!("Completed in: {:?}", duration);
-    Ok(Response::new(Body::from(body)))
-}
-
-async fn factory_caller3() -> Result<Response<Body>, Infallible> {
-    let start_time = Instant::now();
-
-    // Wasmtime 초기화
-    let engine = Engine::default();
-    let module = Module::from_file(&engine, "matrix_multiply_wasm.wasm").unwrap(); // 새로운 Wasm 모듈
-    let mut store = Store::new(&engine, ());
-    let instance = Instance::new(&mut store, &module, &[]).unwrap();
-
-    let matrix_multiply = instance
-        .get_typed_func::<(), f64, _>(&mut store, "matrix_multiply")
-        .unwrap();
-
-    // Wasm 모듈의 matrix_multiply 함수 호출
-    let result = matrix_multiply.call(&mut store, ()).unwrap();
-
-    let duration = start_time.elapsed();
-    let body = format!("Completed in: {:?}, Result: {}", duration, result);
-    Ok(Response::new(Body::from(body)))
-}
-
-async fn matrix_multiply() -> Result<Response<Body>, Infallible> {
-    let start_time = Instant::now();
-    const N: usize = 1000;
-
-    // Use heap-allocated matrices
-    let a = vec![vec![1.0; N]; N];
-    let b = vec![vec![2.0; N]; N];
-    let mut c = vec![vec![0.0; N]; N];
-
-    // Matrix multiplication using parallelism
-    task::spawn_blocking(move || {
-        for i in 0..N {
-            for j in 0..N {
-                let mut sum = 0.0;
-                for k in 0..N {
-                    sum += a[i][k] * b[k][j];
-                }
-                c[i][j] = sum;
-            }
-        }
-    }).await.unwrap();
-
-    // Return the first element of the result matrix
-
-    let duration = start_time.elapsed();
-    let body = format!("Completed in: {:?}", duration);
-    Ok(Response::new(Body::from(body)))
-}
-
-async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible> {
+    
     match (req.method(), req.uri().path()) {
-        (&Method::GET, "/hello") => handle_hello().await,
-        (&Method::GET, "/bye") => handle_bye().await,
-        (&Method::POST, "/mirror") => handle_mirror(req).await,
-        (&Method::GET, "/factorize") => factory_caller().await,
-        (&Method::GET, "/factorize2") => factory_caller2().await,
-        (&Method::GET, "/mat") => factory_caller3().await,
-        (&Method::GET, "/matrix_multiply2") => matrix_multiply().await,
+        (&Method::GET, "/matrix_multiply") => matrix_multiply().await,
         _ => Ok(Response::new(Body::from("Not Found"))),
     }
 }
 
 #[tokio::main]
 async fn main() {
-    let make_svc =
-        make_service_fn(|_conn| async { Ok::<_, Infallible>(service_fn(handle_request)) });
+    // Load environment variables from .env file
+    dotenv().ok();
+    
+    // Retrieve server IP and PORT from environment variables
+    let server_ip = env::var("SERVER_IP").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let server_port = env::var("SERVER_PORT")
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse::<u16>()
+        .expect("SERVER_PORT must be a valid u16 number");
 
-    let addr = ([127, 0, 0, 1], 3000).into();
+    let addr = (server_ip.parse::<std::net::IpAddr>().expect("Invalid IP address"), server_port).into();
+    
+    let make_svc = make_service_fn(|_conn| async { Ok::<_, Infallible>(service_fn(router)) });
     let server = Server::bind(&addr).serve(make_svc);
 
     println!("Listening on http://{}", addr);
