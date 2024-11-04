@@ -22,7 +22,7 @@ async fn router(req: Request<Body>) -> Result<Response<Body>, Infallible> {
     
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/matrix_multiply") => matrix_multiply().await,
-        (&Method::GET, "/hello") => hello_world().await,
+        (&Method::GET, "/ping") => hello_world().await,
         _ => Ok(create_response(404, "Not Found")),
     }
 }

@@ -1,5 +1,24 @@
 from fastapi import FastAPI
 import numpy as np
+import math
+
+
+def count_primes(limit):
+    count = 0
+
+    for num in range(2, limit + 1):
+        is_prime = True
+        max_divisor = int(math.sqrt(num))
+
+        for i in range(2, max_divisor + 1):
+            if num % i == 0:
+                is_prime = False
+                break
+
+        if is_prime:
+            count += 1
+
+    return count
 
 app = FastAPI()
 
@@ -21,3 +40,9 @@ def matrix_multiply():
 
     # 결과 행렬의 첫 번째 요소 반환
     return {"result": c[0][0]}
+
+@app.get("/ping")
+def read_root():
+    a = count_primes(1000000)
+    
+    return {"Hello": "World", "primes": a}

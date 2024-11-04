@@ -6,8 +6,33 @@ app.use(express.json({ limit: '30mb' }));
 app.use(express.urlencoded({ limit: '30mb', extended: true }));
 
 
-app.get('/hello', (req, res) => {
-    res.send('Hello, world!');
+function countPrimes(limit) {
+    let count = 0;
+
+    for (let num = 2; num <= limit; num++) {
+        let isPrime = true;
+        const maxDivisor = Math.sqrt(num);
+
+        for (let i = 2; i <= maxDivisor; i++) {
+            if (num % i === 0) {
+                isPrime = false;
+                break;
+            }
+        }
+
+        if (isPrime) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+app.get('/ping', (req, res) => {
+    const a = countPrimes(1000000);
+
+    res.send(`Hello World! ${a}`);
+
 });
 
 app.post('/parsetest', (req, res) => {

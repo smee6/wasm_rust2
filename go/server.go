@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"math"
 	"net/http"
+	"time"
 )
 
 func matrixMultiply(w http.ResponseWriter, r *http.Request) {
@@ -38,9 +40,42 @@ func matrixMultiply(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func countPrimes(limit int) int {
+	count := 0
+	for num := 2; num <= limit; num++ {
+		isPrime := true
+		maxDivisor := int(math.Sqrt(float64(num)))
+		for i := 2; i <= maxDivisor; i++ {
+			if num%i == 0 {
+				isPrime = false
+				break
+			}
+		}
+		if isPrime {
+			count++
+		}
+	}
+	return count
+}
+
+func ping(w http.ResponseWriter, r *http.Request) {
+	startTime := time.Now()
+	limit := 100000
+	primeCount := countPrimes(limit)
+	duration := time.Since(startTime)
+
+	response := map[string]interface{}{
+		"prime_count": primeCount,
+		"duration_ms": duration.Milliseconds(),
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
 func main() {
-	// helloworld
+	// Hello World 출력
 	println("Hello, World!")
 	http.HandleFunc("/mat", matrixMultiply)
+	http.HandleFunc("/ping", ping)
 	http.ListenAndServe(":3000", nil)
 }

@@ -41,7 +41,8 @@ public class TestController {
         double[][] c = Matrix.multiply(a, b);
         long endTime = System.currentTimeMillis();
 
-        return "Matrix multiplication completed in " + (endTime - startTime) + " milliseconds." + "Result[0][0]: " + c[0][0];
+        return "Matrix multiplication completed in " + (endTime - startTime) + " milliseconds." + "Result[0][0]: "
+                + c[0][0];
     }
 
     @GetMapping("/factorize")
@@ -54,5 +55,37 @@ public class TestController {
 
         long duration = System.currentTimeMillis() - startTime;
         return "Completed in: " + duration + " ms";
+    }
+
+    @GetMapping("/ping")
+    public String ping() {
+        long startTime = System.currentTimeMillis();
+        int limit = 1000000;
+        int count = countPrimes(limit);
+        long endTime = System.currentTimeMillis();
+
+        return "Found " + count + " primes up to " + limit + " in " + (endTime - startTime) + " milliseconds.";
+    }
+
+    private int countPrimes(int limit) {
+        int count = 0;
+
+        for (int num = 2; num <= limit; num++) {
+            boolean isPrime = true;
+            int maxDivisor = (int) Math.sqrt(num);
+
+            for (int i = 2; i <= maxDivisor; i++) {
+                if (num % i == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+
+            if (isPrime) {
+                count++;
+            }
+        }
+
+        return count;
     }
 }

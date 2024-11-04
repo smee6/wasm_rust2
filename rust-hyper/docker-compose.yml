@@ -8,3 +8,5 @@ services:
     environment:
       SERVER_IP: 0.0.0.0
       SERVER_PORT: 3000
+    volumes:
+      - ./wasms:/app/wasms  # 호스트의 wasms 폴더를 컨테이너의 /app/wasms로 마운트
